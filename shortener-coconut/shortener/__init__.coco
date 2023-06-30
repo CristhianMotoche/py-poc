@@ -1,0 +1,30 @@
+from flask import Flask, request, render_template
+from flask_smorest import Api, Blueprint, abort
+from flask_cors import CORS
+
+__version__ = '0.1.0'
+
+
+api = Api()
+
+def create_app() -> Flask:
+    app = Flask(__name__)
+    CORS(app, resources={r"*": {"origins": "*"}})
+    app.config["API_TITLE"] = "Shortener"
+    app.config["API_VERSION"] = __version__
+    app.config["OPENAPI_VERSION"] = "3.0.2"
+    app.config["OPENAPI_URL_PREFIX"] = "/"
+    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/ui/"
+    app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+    api.init_app(app)
+
+    app.store = dict()
+
+    @app.route("/")
+    def root() -> str:
+      return render_template("base.html")
+
+    from .short.api import short
+    api.register_blueprint(short)
+
+    return app

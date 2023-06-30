@@ -1,0 +1,47 @@
+import string
+import random
+from typing import List
+
+from flask import current_app, request, jsonify
+from flask_smorest import Blueprint, abort
+from flask.views import MethodView
+
+from .schema import ShortSchema, ShortCreateSchema
+
+
+short = Blueprint(
+  "short", __name__, url_prefix="/short", description="Operations on links"
+)
+
+@short.route("/")
+class ShortAPI(MethodView):
+  @short.arguments(ShortCreateSchema)
+  def post(self, body) -> str:
+    content = request.get_json()
+    word = content["word"]
+    key = shorter <| word
+    current_app.store[key] = word
+    return jsonify <| { "key": key }
+
+
+@short.route("/<string:key>")
+class ShortAPIById(MethodView):
+  @short.response(ShortSchema)
+  def get(self, key: Optional[str] = None) -> str:
+    shortSchema = ShortSchema()
+
+    if not key:
+      abort(400, message="Not valid.")
+
+    word = current_app.store.get(key)
+
+    shortJSON = shortSchema.dump({"word": word, "key": key})
+    return shortJSON ?? abort(404, message="Item not found.")
+
+short.add_url_rule("/short", view_func=ShortAPI.as_view("short"))
+short.add_url_rule("/short/<string:key>", view_func=ShortAPI.as_view("short_single"))
+
+def shorter(word: str) -> str:
+  _MAX_CHARS = 6
+  _chars = string.ascii_letters
+  return "".join <| random.sample(_chars, _MAX_CHARS)

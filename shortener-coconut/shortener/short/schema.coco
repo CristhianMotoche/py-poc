@@ -1,0 +1,10 @@
+from marshmallow import Schema
+from marshmallow import fields as fd
+
+
+class ShortSchema(Schema):
+  word = fd.Str()
+  key = fd.Str()
+
+class ShortCreateSchema(Schema):
+  word = fd.Str()
