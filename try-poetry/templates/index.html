@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="">
+    <title>Test</title>
+  </head>
+  <body>
+    <form action='' method='POST'>
+      {% if form.contact.data %}
+        {% for sf in form.contact %}
+          {% if sf.data %}
+            <input id="{{ sf.id }}" name="{{ sf.name }}" type="text" value="{{ sf.data }}">
+          {% else %}
+            <input id="{{ sf.id }}" name="{{ sf.name }}" type="text" value="">
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      <input id="{{ form.contact.name }}-123" name="{{ form.contact.name }}-123" type="text" value="fff">
+      <br/>
+      {{ form.csrf_token }}
+      {{ form.name.label }}
+      {{ form.name }}
+      {{ form.errors }}
+      <input type='submit' value='Submit'>
+    </form>
+  </body>
+</html>
