@@ -10,11 +10,12 @@ TV = TypeVar('TV')
 class Config:
     PORT: int
     HOSTNAME: str
+    IS_SECURE: bool
     # ENV: Literal["prod", "dev"]
 
     @classmethod
     def load(cls) -> Self:
-        th = typing.get_type_hints(cls)
+        th = typing.get_type_hints(cls, include_extras=True)
         c = cls(**{
             key: cls._load_env(key, type_hint)
             for key, type_hint in th.items()
@@ -23,29 +24,21 @@ class Config:
         return c
 
     @classmethod
-    def _load_env(cls, key: str, type_to_apply: Type[TV]) -> TV:
+    def _load_env(cls, key: str, type_to_apply: Type) -> Any:
         value = os.getenv(key)
 
         if not value:
             raise ValueError("Missing env variables are not supported yet")
 
         match type_to_apply.__name__:
-            case 'int':
+            case 'int' | 'str' | 'float':
                 return type_to_apply(value)
-            case 'str':
-                return type_to_apply(value)
+            case 'bool':
+                return value == 'True'
             case 'UnionType':
                 return cls._try_union_types(value, cast(types.UnionType, type_to_apply))
             case x:
-                raise ValueError(f"The given type ({x}) cannot be used to parse an env variable")
-
-        # if value and not isinstance(type_to_apply, types.UnionType):
-        #     return type_to_apply(value)
-
-        # elif value and isinstance(type_to_apply, types.UnionType):
-        #     return cls._try_union_types(value, type_to_apply)
-
-        # raise ValueError()
+                raise ValueError(f"The given type ({x}) for {key} cannot be used to parse an env variable")
 
     @classmethod
     def _try_union_types(cls, value: str, type_to_apply: types.UnionType) -> Any:
@@ -62,5 +55,7 @@ class Config:
 try:
     config = Config.load()
     reveal_type(config.PORT)
+    reveal_type(config.HOSTNAME)
+    reveal_type(config.IS_SECURE)
 except ValueError as ve:
     print(ve)
