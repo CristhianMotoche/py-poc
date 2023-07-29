@@ -7,11 +7,7 @@ import typing
 TV = TypeVar('TV')
 
 @dataclass
-class Config:
-    PORT: int
-    HOSTNAME: str
-    IS_SECURE: bool
-    # ENV: Literal["prod", "dev"]
+class BaseConfig:
 
     @classmethod
     def load(cls) -> Self:
@@ -51,11 +47,3 @@ class Config:
             f'The value {value} is not of any of these types'
             f' {type_to_apply.__args__}'
         )
-
-try:
-    config = Config.load()
-    reveal_type(config.PORT)
-    reveal_type(config.HOSTNAME)
-    reveal_type(config.IS_SECURE)
-except ValueError as ve:
-    print(ve)
