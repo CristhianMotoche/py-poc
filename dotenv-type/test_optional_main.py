@@ -13,7 +13,7 @@ class ConfigTwo(BaseConfig):
     NONE_IN_UNION: str | None
 
 
-class ConfigHappyPathTest(TestCase):
+class ConfigOptionalTest(TestCase):
     def setUp(self):
         pass
 
