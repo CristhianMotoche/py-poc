@@ -1,4 +1,5 @@
 import os
+from typing import Literal
 from unittest import TestCase, main
 from main import BaseConfig
 from dataclasses import dataclass
@@ -11,7 +12,6 @@ class Config(BaseConfig):
     TRESHOLD: float
     IS_SECURE: bool
     UNION: int | bool
-    # ENV: Literal["prod", "dev"]
 
 
 class ConfigHappyPathTest(TestCase):
@@ -49,6 +49,29 @@ class ConfigHappyPathTest(TestCase):
         os.environ["UNION"] = "True"
         config = Config.load()
         assert config.UNION == True
+
+
+@dataclass
+class UnhappyOne(BaseConfig):
+    One: int
+
+
+@dataclass
+class UnhappyTwo(BaseConfig):
+    ENV: Literal["prod", "dev"]
+
+
+class ConfigUnhappyPathTest(TestCase):
+    def setUp(self):
+        os.environ["ONE"] = "ABC"
+
+    def test_returns_value_error_on_wrong_type(self):
+        with self.assertRaises(ValueError):
+            UnhappyOne.load()
+
+    def test_returns_value_error_on_literal_types_because_of_missing_support(self):
+        with self.assertRaises(ValueError):
+            UnhappyTwo.load()
 
 if __name__ == "__main__":
     main()
