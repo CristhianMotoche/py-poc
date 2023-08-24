@@ -16,7 +16,6 @@ class BaseConfig:
             key: cls._load_env(key, type_hint)
             for key, type_hint in th.items()
         })
-        print("C", c)
         return c
 
     @classmethod
@@ -24,17 +23,26 @@ class BaseConfig:
         value = os.getenv(key)
 
         if not value:
-            raise ValueError("Missing env variables are not supported yet")
+            if None.__class__ not in typing.get_args(type_to_apply):
+                raise ValueError("Missing env variables are not supported yet")
+            return value
+        else:
+            return cls._check_type(key, value, type_to_apply)
 
-        match type_to_apply.__name__:
-            case 'int' | 'str' | 'float':
-                return type_to_apply(value)
-            case 'bool':
-                return value == 'True'
-            case 'UnionType':
-                return cls._try_union_types(value, cast(types.UnionType, type_to_apply))
-            case x:
-                raise ValueError(f"The given type ({x}) for {key} cannot be used to parse an env variable")
+    @classmethod
+    def _check_type(cls, key: str, value: str, type_to_apply: Type) -> Any:
+        if isinstance(type_to_apply, types.UnionType):
+            return cls._try_union_types(value, cast(types.UnionType, type_to_apply))
+        elif issubclass(type_to_apply, bool):
+            return value == "True"
+        elif issubclass(type_to_apply, int):
+            return int(value)
+        elif issubclass(type_to_apply, float):
+            return float(value)
+        elif issubclass(type_to_apply, str):
+            return value
+        else:
+            raise ValueError(f"The given type ({type_to_apply}) for {key} cannot be used to parse an env variable")
 
     @classmethod
     def _try_union_types(cls, value: str, type_to_apply: types.UnionType) -> Any:
