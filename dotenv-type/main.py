@@ -1,10 +1,8 @@
 import types
-from typing import Any, Literal, Self, Type, TypeVar, cast, reveal_type
+from typing import Any, Self, Type, cast
 from dataclasses import dataclass
 import os
 import typing
-
-TV = TypeVar('TV')
 
 @dataclass
 class BaseConfig:
@@ -12,11 +10,10 @@ class BaseConfig:
     @classmethod
     def load(cls) -> Self:
         th = typing.get_type_hints(cls, include_extras=True)
-        c = cls(**{
+        return cls(**{
             key: cls._load_env(key, type_hint)
             for key, type_hint in th.items()
         })
-        return c
 
     @classmethod
     def _load_env(cls, key: str, type_to_apply: Type) -> Any:
