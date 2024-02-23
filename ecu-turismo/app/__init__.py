@@ -6,39 +6,39 @@ from flask import abort, render_template, request
 app = Flask(__name__)
 
 @dataclass
-class Book:
+class City:
     id: int
-    title: str
-    author: str
+    name: str
+    description: str
 
 
-books = [
-    # Initial book
-    Book(id=1, title='Cumanda', author='Juan Leon Mera')
+cities = [
+    # Initial city
+    City(id=1, name='Quito', description='Juan Leon Mera')
 ]
 
 def next_id() -> int:
     try:
-        return max([x.id for x in books]) + 1
+        return max([x.id for x in cities]) + 1
     except ValueError:
         return 1
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html", books=books)
+    return render_template("index.html", cities=cities)
 
 @app.route("/submit", methods=["POST"])
 def submit():
     data = request.form
-    new_book = Book(id=next_id(), title=data['title'], author=data['author'])
-    books.append(new_book)
-    return render_template("book_row.html", book=new_book)
+    new_city = City(id=next_id(), name=data['name'], description=data['description'])
+    cities.append(new_city)
+    return render_template("city_row.html", city=new_city)
 
-@app.route("/delete/<int:book_id>", methods=["DELETE"])
-def delete(book_id: int):
+@app.route("/delete/<int:city_id>", methods=["DELETE"])
+def delete(city_id: int):
     try:
-        [x] = [book for book in books if book.id == book_id]
-        books.remove(x)
+        [x] = [city for city in cities if city.id == city_id]
+        cities.remove(x)
         return ""
-    except:
+    except ValueError:
         return abort(404)

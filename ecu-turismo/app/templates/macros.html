@@ -1,10 +1,10 @@
-{% macro book_row(book) %}
+{% macro city_row(city) %}
 <tr>
-  <td>{{book.title}}</td>
-  <td>{{book.author}}</td>
+  <td>{{city.title}}</td>
+  <td>{{city.author}}</td>
   <td>EDIT</td>
   <td>
-    <button hx-delete="/delete/{{ book.id }}" />Delete?</button>
+    <button hx-delete="/delete/{{ city.id }}" />Delete?</button>
   </td>
 </tr>
 {% endmacro %}
