@@ -14,7 +14,7 @@ class City:
 
 cities = [
     # Initial city
-    City(id=1, name='Quito', description='Juan Leon Mera')
+    City(id=1, name='Quito', description='Carita de Dios!')
 ]
 
 def next_id() -> int:
