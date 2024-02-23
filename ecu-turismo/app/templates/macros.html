@@ -1,0 +1,10 @@
+{% macro book_row(book) %}
+<tr>
+  <td>{{book.title}}</td>
+  <td>{{book.author}}</td>
+  <td>EDIT</td>
+  <td>
+    <button hx-delete="/delete/{{ book.id }}" />Delete?</button>
+  </td>
+</tr>
+{% endmacro %}
