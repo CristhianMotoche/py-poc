@@ -4,9 +4,12 @@
 <html lang="en">
   <head>
     <title>Ecuador Cities | HTMX Sample</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-                                                                                               integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
     <!-- HTMX -->
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
     <script src="https://unpkg.com/htmx.org@1.5.0"></script>
 
     <style>
@@ -33,11 +36,26 @@ tr:nth-child(even) {
     </style>
   </head>
   <body>
-    <h1>Cities Recommendations</h1>
-
-    <form hx-post="/submit" hx-swap="beforeend" hx-target="#new-city" class="mb-3">
-      <input type="text" placeholder="City Name" name="name" class="form-control mb-3" />
-      <input type="text" placeholder="Recomendation" name="recomendation" class="form-control mb-3" />
+    <form
+        hx-post="/submit"
+        hx-swap="beforeend"
+        hx-target="#new-city"
+        hx-trigger="submit"
+        class="mb-3"
+        _="on htmx:afterRequest reset() me"
+    >
+      <input
+        type="text"
+        placeholder="City Name"
+        name="name"
+        class="form-control mb-3"
+      />
+      <input
+        type="text"
+        placeholder="Recomendation"
+        name="recomendation"
+        class="form-control mb-3"
+      />
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
