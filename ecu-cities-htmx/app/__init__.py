@@ -30,6 +30,10 @@ def next_id() -> int:
     except ValueError:
         return 1
 
+def lookup_city(city_id: int) -> City:
+    [x] = [city for city in cities if city.id == city_id]
+    return x
+
 @app.route("/", methods=["GET"])
 def home():
     return render_template("index.html", cities=cities)
@@ -41,11 +45,31 @@ def submit():
     cities.append(new_city)
     return render_template("city_row.html", city=new_city)
 
+@app.route("/get/<int:city_id>", methods=["GET"])
+def get(city_id: int):
+    try:
+        city = lookup_city(city_id)
+        return render_template("city_row.html", city=city)
+    except ValueError:
+        return abort(404)
+
 @app.route("/delete/<int:city_id>", methods=["DELETE"])
 def delete(city_id: int):
     try:
-        [x] = [city for city in cities if city.id == city_id]
-        cities.remove(x)
+        cities.remove(lookup_city(city_id))
         return ""
+    except ValueError:
+        return abort(404)
+
+@app.route("/edit/<int:city_id>", methods=["GET", "POST"])
+def edit(city_id: int):
+    try:
+        city = lookup_city(city_id)
+        if request.method == "POST":
+            data = request.form
+            city.name = data['name']
+            city.recomendation = data['recomendation']
+            return render_template("city_row.html", city=city)
+        return render_template("edit_city.html", city=city)
     except ValueError:
         return abort(404)

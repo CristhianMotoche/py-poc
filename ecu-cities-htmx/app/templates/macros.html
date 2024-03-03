@@ -2,9 +2,30 @@
 <tr>
   <td>{{city.name}}</td>
   <td>{{city.recomendation}}</td>
-  <td>EDIT</td>
+  <td>
+    <button hx-get="/edit/{{ city.id }}" />Edit?</button>
+  </td>
   <td>
     <button hx-delete="/delete/{{ city.id }}" />Delete?</button>
   </td>
+</tr>
+{% endmacro %}
+
+{% macro edit_city(city) %}
+<tr id="{{ city.id }}">
+    <form hx-post="/edit/{{ city.id }}">
+      <td>
+        <input name="name" value="{{ city.name }}" />
+      </td>
+      <td>
+        <input name="recomendation" value="{{ city.recomendation }}" />
+      </td>
+      <td>
+        <button type="submit">Submit</button>
+      </td>
+    </form>
+    <td>
+      <button hx-get="/get/{{ city.id }}">Cancel</button>
+    </td>
 </tr>
 {% endmacro %}
