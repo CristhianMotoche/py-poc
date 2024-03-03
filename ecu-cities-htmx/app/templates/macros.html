@@ -6,7 +6,7 @@
     <button hx-get="/edit/{{ city.id }}" />Edit?</button>
   </td>
   <td>
-    <button hx-delete="/delete/{{ city.id }}" />Delete?</button>
+    <button hx-delete="/delete/{{ city.id }}" hx-confirm="Are you sure?"/>Delete?</button>
   </td>
 </tr>
 {% endmacro %}
