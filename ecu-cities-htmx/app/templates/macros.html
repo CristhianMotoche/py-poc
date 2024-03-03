@@ -1,7 +1,7 @@
 {% macro city_row(city) %}
 <tr>
   <td>{{city.name}}</td>
-  <td>{{city.description}}</td>
+  <td>{{city.recomendation}}</td>
   <td>EDIT</td>
   <td>
     <button hx-delete="/delete/{{ city.id }}" />Delete?</button>

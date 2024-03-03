@@ -33,11 +33,11 @@ tr:nth-child(even) {
     </style>
   </head>
   <body>
-    <h1>Book Recommendations</h1>
+    <h1>Cities Recommendations</h1>
 
     <form hx-post="/submit" hx-swap="beforeend" hx-target="#new-city" class="mb-3">
-      <input type="text" placeholder="City Name" name="title" class="form-control mb-3" />
-      <input type="text" placeholder="Description" name="author" class="form-control mb-3" />
+      <input type="text" placeholder="City Name" name="name" class="form-control mb-3" />
+      <input type="text" placeholder="Recomendation" name="recomendation" class="form-control mb-3" />
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
@@ -45,7 +45,7 @@ tr:nth-child(even) {
       <thead>
         <tr>
           <th scope="col">City Name</th>
-          <th scope="col">Description</th>
+          <th scope="col">Recomendation</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
         </tr>

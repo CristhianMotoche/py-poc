@@ -9,12 +9,19 @@ app = Flask(__name__)
 class City:
     id: int
     name: str
-    description: str
+    recomendation: str
 
 
 cities = [
     # Initial city
-    City(id=1, name='Quito', description='Carita de Dios!')
+    City(
+        id=1,
+        name='Quito',
+        recomendation=(
+            'Visit The Teleferico and see city over 4000'
+            ' meters over sea level after riding a 4km cable car'
+        )
+    )
 ]
 
 def next_id() -> int:
@@ -30,7 +37,7 @@ def home():
 @app.route("/submit", methods=["POST"])
 def submit():
     data = request.form
-    new_city = City(id=next_id(), name=data['name'], description=data['description'])
+    new_city = City(id=next_id(), name=data['name'], recomendation=data['recomendation'])
     cities.append(new_city)
     return render_template("city_row.html", city=new_city)
 
