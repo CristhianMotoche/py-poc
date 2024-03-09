@@ -24,7 +24,7 @@ cities = [
     )
 ]
 
-def next_id() -> int:
+def next_id() -> str:
     try:
         return max([x.id for x in cities]) + 1
     except ValueError:
