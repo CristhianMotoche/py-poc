@@ -4,21 +4,18 @@ I created this small app to play around HTMX.
 
 ## Req
 
-* asdf
+* devenv
 
 ## Install
 
 ```
-asdf install
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+devenv shell
 ```
 
 ## Run
 
 ```
-(venv) python run.py
+coconut-run run.coco
 ```
 
 ## Open
