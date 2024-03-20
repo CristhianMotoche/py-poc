@@ -9,4 +9,8 @@ devenv.local.nix
 # pre-commit
 .pre-commit-config.yaml
 
+# Coconut
 __coconut_cache__
+
+# Compiles output
+dist

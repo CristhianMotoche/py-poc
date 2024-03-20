@@ -12,10 +12,11 @@ I created this small app to play around HTMX.
 devenv shell
 ```
 
-## Run
+## Compile and Run
 
 ```
-coconut-run run.coco
+coconut . dist
+python dist
 ```
 
 ## Open
