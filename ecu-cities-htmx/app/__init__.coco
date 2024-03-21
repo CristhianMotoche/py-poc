@@ -29,13 +29,17 @@ cities = [
 ]
 
 def next_id() -> str:
-    try:
-        return max([x.\id for x in cities]) + 1
-    except ValueError:
+    match safe_call(max, [x.\id for x in cities]):
+      case Expected(result, error=None):
+        return result + 1
+      case _:
         return 1
 
 def lookup_city(city_id: int) -> City | None:
-    return [city for city in cities if city.\id == city_id] |> head
+    return (
+      [city for city in cities if city.\id == city_id]
+      |> x => x[0]
+    )
 
 @app.route("/", methods=["GET"])
 def home():
