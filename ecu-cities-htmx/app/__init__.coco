@@ -3,11 +3,15 @@ from dataclasses import dataclass
 from flask import Flask
 from flask import abort, render_template, request
 
-app = Flask(__name__)
+import os
+
+TEMPLATE_DIR = os.getenv("TEMPLATE_DIR")
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR)
 
 @dataclass
 class City:
-    id: int
+    \id: int
     name: str
     recomendation: str
 
@@ -15,7 +19,7 @@ class City:
 cities = [
     # Initial city
     City(
-        id=1,
+        \id=1,
         name='Quito',
         recomendation=(
             'Visit The Teleferico and see city over 4000'
@@ -26,13 +30,12 @@ cities = [
 
 def next_id() -> str:
     try:
-        return max([x.id for x in cities]) + 1
+        return max([x.\id for x in cities]) + 1
     except ValueError:
         return 1
 
-def lookup_city(city_id: int) -> City:
-    [x] = [city for city in cities if city.id == city_id]
-    return x
+def lookup_city(city_id: int) -> City | None:
+    return [city for city in cities if city.\id == city_id] |> head
 
 @app.route("/", methods=["GET"])
 def home():
@@ -41,7 +44,7 @@ def home():
 @app.route("/submit", methods=["POST"])
 def submit():
     data = request.form
-    new_city = City(id=next_id(), name=data['name'], recomendation=data['recomendation'])
+    new_city = City(\id=next_id(), name=data['name'], recomendation=data['recomendation'])
     cities.append(new_city)
     return render_template("city_row.html", city=new_city)
 
