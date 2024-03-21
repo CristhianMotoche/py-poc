@@ -14,9 +14,11 @@ devenv shell
 
 ## Compile and Run
 
+Run these commands after loading the devenv shell:
+
 ```
-coconut . dist
-python dist
+compile-watch
+run
 ```
 
 ## Open
