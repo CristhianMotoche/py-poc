@@ -1,0 +1,50 @@
+from dataclasses import dataclass
+
+import requests
+import bs4
+import json
+
+URL = "https://luchomellera.com/agenda/"
+
+@dataclass
+class Show:
+  date: str
+  place: str
+
+  def to_dict(self):
+    return { "date": self.date, "place": self.place }
+
+
+def parse_show(tag) -> Show | None:
+  match (tag.find('h2'), tag.find('h4')):
+    case (None, None):
+      return None
+    case (_, None):
+      return None
+    case (None, _):
+      return None
+    case (d, place):
+      return Show(place=place.get_text(), \date=d.get_text())
+
+
+def parse_shows(html_doc: str) -> list[str]:
+  soup = bs4.BeautifulSoup(html_doc, 'html.parser')
+  return (
+      soup.find_all('section', class_="elementor-section")
+      |> map$(parse_show)
+      |> filter$(None)
+      |> map$((x) => x.to_dict())
+      |> list
+  )
+
+
+if __name__  == "__main__":
+  with open("shows.json", "w") as f:
+    shows_json = (
+        requests.get(URL)
+        |> (x) => x.content
+        |> parse_shows
+        |> json.dumps
+    )
+    f.write(shows_json)
+    print("Done!")
