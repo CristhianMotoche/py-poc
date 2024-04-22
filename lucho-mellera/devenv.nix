@@ -17,4 +17,11 @@
     enable = true;
     requirements = ./requirements.txt;
   };
+
+  scripts.crawl.exec = ''
+    coconut-run crawler
+  '';
+  scripts.web.exec = ''
+    coconut-run web
+  '';
 }

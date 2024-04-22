@@ -17,17 +17,13 @@ class Show:
 
 def parse_show(tag) -> Show | None:
   match (tag.find('h2'), tag.find('h4')):
-    case (None, None):
-      return None
-    case (_, None):
-      return None
-    case (None, _):
-      return None
-    case (d, place):
+    case (d `isinstance` bs4.element.Tag, place `isinstance` bs4.element.Tag):
       return Show(place=place.get_text(), \date=d.get_text())
+    case _:
+      return None
 
 
-def parse_shows(html_doc: str) -> list[str]:
+def parse_shows(html_doc: str) -> list[dict]:
   soup = bs4.BeautifulSoup(html_doc, 'html.parser')
   return (
       soup.find_all('section', class_="elementor-section")
@@ -40,11 +36,14 @@ def parse_shows(html_doc: str) -> list[str]:
 
 if __name__  == "__main__":
   with open("shows.json", "w") as f:
-    shows_json = (
-        requests.get(URL)
-        |> (x) => x.content
-        |> parse_shows
-        |> json.dumps
-    )
-    f.write(shows_json)
-    print("Done!")
+    match safe_call(requests.get, URL):
+      case Expected(result, error=None):
+        shows_json = (
+          result.content
+          |> parse_shows
+          |> json.dumps
+        )
+        f.write(shows_json)
+        print("Done!")
+      case Expected(_, error=error):
+        print(f"Sorry, there was an error: {error}")

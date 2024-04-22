@@ -11,12 +11,23 @@
     <script src="https://unpkg.com/htmx.org@1.5.0"></script>
 
     <style>
-body{
+body {
   padding: 20px;
+}
+
+.show {
+  padding: 2px;
+  border: 1px red;
+  border-radius: 5rem;
 }
     </style>
   </head>
   <body>
-      {{ json_file }}
+    {% for show in shows %}
+    <div class="show">
+      <p>{{ show['place'] }}</p>
+      <p>{{ show['date'] }}</p>
+    </div>
+    {% endfor %}
   </body>
 </html>
