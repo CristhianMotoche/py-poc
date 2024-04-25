@@ -23,11 +23,12 @@ body {
     </style>
   </head>
   <body>
-    {% for show in shows %}
-    <div class="show">
-      <p>{{ show['place'] }}</p>
-      <p>{{ show['date'] }}</p>
+    <div class="cities">
+      <ul>
+      {% for city in cities %}
+        <li>{{ city }}</li>
+      {% endfor %}
+      </ul>
     </div>
-    {% endfor %}
   </body>
 </html>

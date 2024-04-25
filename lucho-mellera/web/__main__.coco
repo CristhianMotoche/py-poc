@@ -7,7 +7,12 @@ app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def home():
   with open("shows.json", 'r') as f:
-    return render_template("index.html", shows=f.read() |> json.loads)
+    shows = f.read() |> json.loads
+    return render_template(
+       "index.html",
+        cities=shows |> map$((x) => x['place'] |> set)
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
