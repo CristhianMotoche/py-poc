@@ -14,21 +14,26 @@
 body {
   padding: 20px;
 }
-
-.show {
-  padding: 2px;
-  border: 1px red;
-  border-radius: 5rem;
-}
     </style>
   </head>
   <body>
     <div class="cities">
+      <h1>All Cities</h1>
       <ul>
       {% for city in cities %}
         <li>{{ city }}</li>
       {% endfor %}
       </ul>
+
+      <h1>Available</h1>
+      <ul>
+      {% for x in available_shows %}
+        <li>{{ x['place'] }} - {{ x['date'] }}</li>
+      {% endfor %}
+      </ul>
+
+      <h1>Will he be in Quito?</h1>
+      <p>{{ show_in_quito }}</p>
     </div>
   </body>
 </html>

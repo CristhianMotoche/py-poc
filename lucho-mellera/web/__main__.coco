@@ -10,7 +10,13 @@ def home():
     shows = f.read() |> json.loads
     return render_template(
        "index.html",
-        cities=shows |> map$((x) => x['place'] |> set)
+        cities=shows |> map$((x) => x['place']) |> set,
+        available_shows=shows |> filter$((x) => 'Agotado' not in x['place']),
+        show_in_quito=(
+            if any('Quito' in x['place'] for x in shows)
+            then 'Yes!!!'
+            else 'Nope :('
+        ),
     )
 
 
