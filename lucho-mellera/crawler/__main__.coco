@@ -34,9 +34,14 @@ def parse_shows(html_doc: str) -> list[dict]:
   )
 
 
+headers = {
+  "Accept-Language" : "en-US,en;q=0.5",
+  "User-Agent": "Defined",
+}
+
 if __name__  == "__main__":
   with open("shows.json", "w") as f:
-    match safe_call(requests.get, URL):
+    match safe_call(requests.get, URL, headers=headers):
       case Expected(result, error=None):
         shows_json = (
           result.content
