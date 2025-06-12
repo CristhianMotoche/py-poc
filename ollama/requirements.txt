@@ -1,1 +1,4 @@
 ollama
+langchain
+langchain-ollama
+langchain-core
