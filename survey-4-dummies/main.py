@@ -36,25 +36,17 @@ def save_embedding(db_url: str, url: str, content: str, embedding: bytes) -> Non
     session.commit()
     session.close()
 
-def create_survey(content: str, client: ollama.Client) -> List[str]:
+def create_survey(content: str, client: ollama.Client) -> str:
     """
     Generate survey questions from website content using Ollama LLM.
+    Returns the raw response text.
     """
     prompt = (
         "Given the following website content, generate 5 concise and relevant survey questions "
         "that assess a user's understanding of the material. Return only the questions as a numbered list.\n\n"
         f"Content:\n{content}\n"
     )
-    # Use Ollama's LLM to generate questions
-    response = client.generate(model="llama3.2", prompt=prompt)["response"]
-    # Extract questions from the response (assuming numbered list)
-    questions = []
-    for line in response.splitlines():
-        if line.strip() and any(line.lstrip().startswith(f"{i}.") for i in range(1, 10)):
-            question = line.split('.', 1)[-1].strip()
-            if question:
-                questions.append(question)
-    return questions
+    return client.generate(model="llama3.2", prompt=prompt)["response"]
 
 def main():
     url = "https://blog.edward-li.com/tech/comparing-pyrefly-vs-ty/"  # Replace with your target URL
@@ -64,9 +56,7 @@ def main():
     embedding = generate_embedding(content, client)
     save_embedding(db_url, url, content, embedding)
     survey = create_survey(content, client)
-    print("Survey Questions:")
-    for q in survey:
-        print(q)
+    print("Survey Questions:", survey)
 
 if __name__ == "__main__":
     main()
