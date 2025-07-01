@@ -1,0 +1,30 @@
+{
+    // See https://code.visualstudio.com/docs/editor/tasks for more information
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Main Script",
+            "type": "shell",
+            "command": "/home/camm/code/py-poc/survey-4-dummies/.venv/bin/python",
+            "args": ["main.py"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Type Check",
+            "type": "shell",
+            "command": "mypy",
+            "args": ["."],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Lint",
+            "type": "shell",
+            "command": "ruff",
+            "args": ["."],
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}

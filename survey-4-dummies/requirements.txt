@@ -1,0 +1,7 @@
+# requirements.txt
+requests
+beautifulsoup4
+ollama
+sqlalchemy
+mypy
+ruff
