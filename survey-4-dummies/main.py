@@ -18,7 +18,7 @@ class Embedding(Base):
 def scrape_website(url: str) -> str:
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, 'html.parser')
-    return soup.get_text()
+    return soup.get_text().strip()
 
 def generate_embedding(text: str, client: ollama.Client) -> bytes:
     embedding = client.embeddings(model="nomic-embed-text", prompt=text)["embedding"]
@@ -42,8 +42,7 @@ def create_survey(content: str, client: ollama.Client) -> str:
     Returns the raw response text.
     """
     prompt = (
-        "Given the following website content, generate 5 concise and relevant survey questions "
-        "that assess a user's understanding of the material. Return only the questions as a numbered list.\n\n"
+        "Given the following website content, generate 5 questions. "
         f"Content:\n{content}\n"
     )
     return client.generate(model="llama3.2", prompt=prompt)["response"]
@@ -53,8 +52,6 @@ def main():
     db_url = "sqlite:///embeddings.db"
     client = ollama.Client()
     content = scrape_website(url)
-    embedding = generate_embedding(content, client)
-    save_embedding(db_url, url, content, embedding)
     survey = create_survey(content, client)
     print("Survey Questions:", survey)
 
