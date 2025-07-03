@@ -2,18 +2,14 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 import ollama
-from sqlalchemy import create_engine, Column, Integer, String, LargeBinary, Sequence
-from sqlalchemy.orm import declarative_base, sessionmaker
 import array
 
-Base = declarative_base()
-
-class Embedding(Base):
-    __tablename__ = 'embeddings'
-    id = Column(Integer, Sequence('embedding_id_seq'), primary_key=True)
-    url = Column(String, nullable=False)
-    content = Column(String, nullable=False)
-    embedding = Column(LargeBinary, nullable=False)
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_ollama import ChatOllama, OllamaEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 
 def scrape_website(url: str) -> str:
     resp = requests.get(url)
@@ -26,16 +22,6 @@ def generate_embedding(text: str, client: ollama.Client) -> bytes:
     arr = array.array('f', embedding)
     return arr.tobytes()
 
-def save_embedding(db_url: str, url: str, content: str, embedding: bytes) -> None:
-    engine = create_engine(db_url)
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    emb = Embedding(url=url, content=content, embedding=embedding)
-    session.add(emb)
-    session.commit()
-    session.close()
-
 def create_survey(content: str, client: ollama.Client) -> str:
     """
     Generate survey questions from website content using Ollama LLM.
@@ -47,13 +33,44 @@ def create_survey(content: str, client: ollama.Client) -> str:
     )
     return client.generate(model="llama3.2", prompt=prompt)["response"]
 
+def get_retriever(data: str) -> Chroma:
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1200, chunk_overlap=300
+    )
+    chunks = text_splitter.split_text(data)
+
+    print("[INFO] Text split into chunks successfully.")
+
+    db = Chroma.from_texts(
+        texts=chunks,
+        embedding=OllamaEmbeddings(model="nomic-embed-text"),
+        persist_directory="db",
+    )
+    return db.as_retriever()
+
+
+def gen_chain(llm, retriever):
+    # Create a question / answer pipeline
+    rag_template = """Gegenerate 5 multiple option questions and their responses based on the following context:
+    {context}
+    """
+    rag_prompt = ChatPromptTemplate.from_template(rag_template)
+    return (
+        {"context": retriever, "question": RunnablePassthrough()}
+        | rag_prompt
+        | llm
+        | StrOutputParser()
+    )
+
+
+
 def main():
     url = "https://blog.edward-li.com/tech/comparing-pyrefly-vs-ty/"  # Replace with your target URL
-    db_url = "sqlite:///embeddings.db"
-    client = ollama.Client()
+    client = ChatOllama(model="llama3.2", temperature=0.1, max_tokens=1000)
     content = scrape_website(url)
-    survey = create_survey(content, client)
-    print("Survey Questions:", survey)
+    retriever = get_retriever(content)
+    chain = gen_chain(client, retriever)
+    print(chain.invoke(""))
 
 if __name__ == "__main__":
     main()

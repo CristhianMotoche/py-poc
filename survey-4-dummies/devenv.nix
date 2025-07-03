@@ -1,15 +1,23 @@
-# devenv.nix
-# See https://devenv.sh/reference/options/ for more options
+{ pkgs, ... }:
+
 {
-  inputs = {
-    python = "3.11";
-    ollama = "latest";
+  # Use Python 3.11 environment
+  languages.python = {
+    enable = true;
+    version = "3.11";
+    venv = {
+      enable = true;
+      requirements = ./requirements.txt;
+    };
   };
 
-  shell = [
-    "pip install -r requirements.txt"
-    "echo 'Ollama must be running locally.'"
+  # Install ollama as a system package if available, or provide a message
+  packages = [
+    pkgs.ollama
   ];
 
-  # Add more configuration as needed
+  enterShell = ''
+    echo "Python virtual environment is ready."
+    echo "Ollama must be running locally (see https://ollama.com/)."
+  '';
 }
