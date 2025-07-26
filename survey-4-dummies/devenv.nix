@@ -1,10 +1,10 @@
 { pkgs, ... }:
 
 {
-  # Use Python 3.11 environment
+  # Use the overridden Python
   languages.python = {
     enable = true;
-    version = "3.11";
+    # Tell devenv to use our custom Python
     venv = {
       enable = true;
       requirements = ./requirements.txt;
