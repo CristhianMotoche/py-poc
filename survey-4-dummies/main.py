@@ -1,4 +1,3 @@
-from typing import List
 import requests
 from bs4 import BeautifulSoup
 import ollama
@@ -49,14 +48,14 @@ def get_retriever(data: str) -> Chroma:
     return db.as_retriever()
 
 
-def gen_chain(llm, retriever):
+def gen_chain(llm, context):
     # Create a question / answer pipeline
     rag_template = """Gegenerate 5 multiple option questions and their responses based on the following context:
     {context}
     """
     rag_prompt = ChatPromptTemplate.from_template(rag_template)
     return (
-        {"context": retriever, "question": RunnablePassthrough()}
+        {"context": context, "question": RunnablePassthrough()}
         | rag_prompt
         | llm
         | StrOutputParser()
@@ -66,10 +65,9 @@ def gen_chain(llm, retriever):
 
 def main():
     url = "https://blog.edward-li.com/tech/comparing-pyrefly-vs-ty/"  # Replace with your target URL
-    client = ChatOllama(model="llama3.2", temperature=0.1, max_tokens=1000)
+    client = ChatOllama(model="llama3.2", temperature=0.1, num_ctx=4096)
     content = scrape_website(url)
-    retriever = get_retriever(content)
-    chain = gen_chain(client, retriever)
+    chain = gen_chain(client, content)
     print(chain.invoke(""))
 
 if __name__ == "__main__":
